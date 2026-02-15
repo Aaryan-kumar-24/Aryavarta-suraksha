@@ -1,0 +1,4 @@
+cd ~/suraksha/service
+
+python3.10 -m venv faceenv310
+source faceenv310/bin/activate
