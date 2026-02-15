@@ -1,0 +1,238 @@
+{% include "header.html" %}
+
+<div style="text-align:center">
+
+<h2>⏳ Waiting Zone Monitoring</h2>
+
+<!-- BIG FIXED CCTV WINDOW -->
+<div style="
+    position:relative;
+    display:inline-block;
+    width:900px;
+    height:650px;
+    background:black;
+    border-radius:12px;
+    overflow:hidden;
+">
+
+    <!-- NORMAL VIDEO -->
+    <img id="liveVideo"
+         src="/wait/stream/"
+         style="width:100%; height:100%; object-fit:cover;">
+
+    <!-- CONFIG MODE -->
+    <div id="configMode"
+         style="display:none; position:absolute; inset:0;">
+
+        <img src="/wait/stream/"
+             style="width:100%; height:100%; object-fit:cover;">
+
+        <canvas id="canvas"
+                width="900"
+                height="650"
+                style="position:absolute; inset:0;">
+        </canvas>
+    </div>
+</div>
+
+<br><br>
+
+<!-- ===== DEFAULT BUTTONS ===== -->
+<div id="defaultBtns">
+    <button onclick="toggleConfig()">⚙ Configure Rectangle</button>
+    <button onclick="clearAll()">🗑 Clear All Rectangles</button>
+    <button onclick="resetDetection()">🔄 Reset Detection</button>
+</div>
+
+<!-- ===== CONFIGURATION PANEL ===== -->
+<div id="configBtns" style="display:none;">
+
+    <br>
+
+    <!-- THRESHOLD -->
+    Threshold:
+    <input type="number" id="globalThreshold" value="1500" style="width:90px;">
+    <button onclick="updateThreshold()">Update Threshold</button>
+
+    <br><br>
+
+    <!-- WAIT TIME -->
+    Wait Time (seconds):
+    <input type="number" id="waitTime" value="2" style="width:80px;">
+
+    <br><br>
+
+    <!-- SAVE + CLOSE -->
+    <button onclick="saveConfig()">💾 Save Configuration</button>
+    <button onclick="toggleConfig()">❌ Close</button>
+
+</div>
+
+<h3>Recent Waiting Alerts</h3>
+<ul id="alertList"></ul>
+
+</div>
+
+
+<script>
+let canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
+
+let boxes = [];
+let bw = 0.2;
+let bh = 0.2;
+
+
+/* ===== LOAD CONFIG FROM BACKEND ===== */
+async function loadConfig(){
+    const r = await fetch("/wait/get-config/");
+    const data = await r.json();
+
+    boxes = data.boxes || [];
+    bw = data.bw;
+    bh = data.bh;
+
+    document.getElementById("waitTime").value = data.wait_time;
+    document.getElementById("globalThreshold").value = data.threshold || 1500;
+
+    draw();
+}
+
+
+/* ===== TOGGLE CONFIG MODE ===== */
+async function toggleConfig(){
+
+    let video = document.getElementById("liveVideo");
+    let config = document.getElementById("configMode");
+    let dBtns = document.getElementById("defaultBtns");
+    let cBtns = document.getElementById("configBtns");
+
+    if(config.style.display === "none"){
+
+        await fetch("/wait/set-mode/", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({config:true})
+        });
+
+        video.style.visibility = "hidden";
+        config.style.display = "block";
+        dBtns.style.display = "none";
+        cBtns.style.display = "block";
+
+        await loadConfig();
+
+    } else {
+
+        await fetch("/wait/set-mode/", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({config:false})
+        });
+
+        config.style.display = "none";
+        video.style.visibility = "visible";
+        dBtns.style.display = "block";
+        cBtns.style.display = "none";
+    }
+}
+
+
+/* ===== CLICK → ADD / DELETE RECTANGLE ===== */
+canvas.onclick = function(e){
+
+    let rect = canvas.getBoundingClientRect();
+    let x = (e.clientX - rect.left) / canvas.width;
+    let y = (e.clientY - rect.top) / canvas.height;
+
+    for(let i=0;i<boxes.length;i++){
+        let b = boxes[i];
+        if(x>b[0] && x<b[0]+bw && y>b[1] && y<b[1]+bh){
+            boxes.splice(i,1);
+            draw();
+            return;
+        }
+    }
+
+    boxes.push([x,y]);
+    draw();
+};
+
+
+/* ===== DRAW RECTANGLES ===== */
+function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    ctx.strokeStyle="yellow";
+    ctx.lineWidth=2;
+
+    boxes.forEach(b=>{
+        ctx.strokeRect(
+            b[0]*canvas.width,
+            b[1]*canvas.height,
+            bw*canvas.width,
+            bh*canvas.height
+        );
+    });
+}
+
+
+/* ===== SAVE FULL CONFIG + AUTO RESET ===== */
+function saveConfig(){
+    fetch("/wait/config/",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            boxes:boxes,
+            wait_time:document.getElementById("waitTime").value,
+            threshold:document.getElementById("globalThreshold").value,
+            bw:bw,
+            bh:bh
+        })
+    })
+    .then(()=>fetch("/wait/reset/", {method:"POST"}))   // 🔥 AUTO RESET
+    .then(toggleConfig);
+}
+
+
+/* ===== UPDATE THRESHOLD ONLY ===== */
+function updateThreshold(){
+    saveConfig();
+}
+
+
+/* ===== CLEAR ALL RECTANGLES ===== */
+function clearAll(){
+    boxes = [];
+    draw();
+    saveConfig();
+}
+
+
+/* ===== MANUAL RESET BUTTON ===== */
+function resetDetection(){
+    fetch("/wait/reset/", {method:"POST"});
+}
+
+
+/* ===== LIVE ALERT LIST ===== */
+function loadAlerts(){
+    fetch("/wait/data/")
+    .then(r=>r.json())
+    .then(data=>{
+        let ul=document.getElementById("alertList");
+        ul.innerHTML="";
+
+        data.slice().reverse().forEach(t=>{
+            let li=document.createElement("li");
+            li.innerText="⏰ Wait alert at " + t;
+            ul.appendChild(li);
+        });
+    });
+}
+
+setInterval(loadAlerts,2000);
+loadConfig();
+</script>
+
+{% include "footer.html" %}

@@ -1,0 +1,59 @@
+{% include "header.html" %}
+
+<h2>👤 Face Recognition Attendance</h2>
+
+<!-- CAMERA STREAM -->
+<img src="/attendance/stream/" class="video-frame">
+
+<!-- REGISTER PERSON -->
+<div class="card">
+    <h3>Register New Person</h3>
+
+    <form method="post" action="/register-face/">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Enter name" required>
+        <button type="submit">Capture Face</button>
+    </form>
+</div>
+
+<!-- ATTENDANCE TABLE -->
+<div class="card">
+    <h3>Detected Attendance</h3>
+
+    <table id="att-table">
+        <tr>
+            <th>Name</th>
+            <th>Last Seen Time</th>
+        </tr>
+    </table>
+</div>
+
+<script>
+function loadAttendance() {
+    fetch("/attendance/data/")
+        .then(res => res.json())
+        .then(data => {
+            let rows = `
+                <tr>
+                    <th>Name</th>
+                    <th>Last Seen Time</th>
+                </tr>
+            `;
+
+            if (data.length === 0) {
+                rows += `<tr><td colspan="2">No attendance yet</td></tr>`;
+            } else {
+                data.forEach(p => {
+                    rows += `<tr><td>${p.name}</td><td>${p.time}</td></tr>`;
+                });
+            }
+
+            document.getElementById("att-table").innerHTML = rows;
+        });
+}
+
+setInterval(loadAttendance, 2000);
+loadAttendance();
+</script>
+
+{% include "footer.html" %}

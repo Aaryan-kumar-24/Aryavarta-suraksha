@@ -1,0 +1,62 @@
+{% include "header.html" %}
+
+<h2>🔥 Real-Time Motion Heatmap</h2>
+
+<!-- ===== VIDEO STREAM ===== -->
+<img src="/heatmap/stream/" class="video-frame">
+
+<!-- ===== SETTINGS PANEL ===== -->
+<div class="card">
+    <h3>Adjust Heatmap Settings</h3>
+
+    <form method="post" action="/heatmap/">
+        {% csrf_token %}
+
+        <label>Decay:</label>
+        <input type="number" step="0.01" name="decay" value="{{ decay }}">
+
+        <label>Gain:</label>
+        <input type="number" step="1" name="gain" value="{{ gain }}">
+
+        <label>Alert START Threshold:</label>
+        <input type="number" step="0.01" name="high" value="{{ high }}">
+
+        <label>Alert STOP Threshold:</label>
+        <input type="number" step="0.01" name="low" value="{{ low }}">
+
+        <button type="submit">Update</button>
+    </form>
+</div>
+
+
+<!-- ===== ALERT HISTORY ===== -->
+<div class="card">
+    <h3>Last 10 Alerts</h3>
+    <ul id="alert-list">
+        {% for a in alerts %}
+            <li>⚠ {{ a }}</li>
+        {% empty %}
+            <li>No alerts yet</li>
+        {% endfor %}
+    </ul>
+</div>
+
+
+<!-- ===== LIVE AUTO-REFRESH ALERT LIST ===== -->
+<script>
+setInterval(() => {
+    fetch("/heatmap/")
+        .then(res => res.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+
+            const newList = doc.getElementById("alert-list");
+            if (newList) {
+                document.getElementById("alert-list").innerHTML = newList.innerHTML;
+            }
+        });
+}, 2000);
+</script>
+
+{% include "footer.html" %}
