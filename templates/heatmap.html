@@ -1,62 +1,232 @@
 {% include "header.html" %}
 
-<h2>🔥 Real-Time Motion Heatmap</h2>
+<style>
+.center{text-align:center}
 
-<!-- ===== VIDEO STREAM ===== -->
-<img src="/heatmap/stream/" class="video-frame">
+/* ===== CCTV WINDOW ===== */
+.cctv{
+  width:1100px;
+  height:620px;
+  margin:30px auto;
+  border-radius:18px;
+  overflow:hidden;
+  background:rgba(0,0,0,0.35);
+  border:1px solid rgba(120,255,180,0.25);
+  backdrop-filter:blur(12px);
+  animation:breatheFloatGreen 5s infinite;
+}
+.cctv:hover{animation:pulseSoftRed 1.2s infinite}
+.cctv img{width:100%;height:100%;object-fit:cover}
 
-<!-- ===== SETTINGS PANEL ===== -->
-<div class="card">
-    <h3>Adjust Heatmap Settings</h3>
+/* ===== ALERT CARD SPLIT LAYOUT ===== */
+.glass{
+  max-width:1000px;
+  margin:75px auto;
+  padding:24px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(120,255,180,0.25);
+  backdrop-filter:blur(12px);
+
+  display:flex;
+  gap:40px;
+  justify-content:space-between;
+}
+
+/* ===== LEFT SETTINGS COLUMN ===== */
+.settings-col{ flex:1; }
+
+/* ===== RIGHT ALERT COLUMN ===== */
+.alert-col{
+  flex:1;
+  border-left:1px solid rgba(255,255,255,0.15);
+  padding-left:24px;
+}
+
+/* ===== LABEL ===== */
+.settings-col label{
+  display:block;
+  margin-top:14px;
+  margin-bottom:6px;
+  color:#9fffd2;
+  font-size:0.95rem;
+}
+
+/* ===== GLASS INPUT ===== */
+.input-glass{
+  width:100%;
+  max-width:260px;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid rgba(120,255,180,0.35);
+  background:rgba(255,255,255,0.08) !important;
+  color:white !important;
+  outline:none;
+  backdrop-filter:blur(8px);
+  transition:all 0.3s ease;
+}
+
+/* prevent white autofill */
+.input-glass:-webkit-autofill,
+.input-glass:-webkit-autofill:hover,
+.input-glass:-webkit-autofill:focus{
+  -webkit-text-fill-color:white;
+  -webkit-box-shadow:0 0 0px 1000px rgba(255,255,255,0.08) inset;
+}
+
+/* focus animation */
+.input-glass:focus{
+  border-color:#00ffb3;
+  box-shadow:0 0 16px rgba(0,255,179,0.6);
+  transform:scale(1.05);
+}
+
+/* ===== CENTER BUTTON WRAPPER ===== */
+.btn-center{
+  text-align:center;
+  margin-top:24px;
+}
+
+/* ===== BUTTON ===== */
+.btn-glass{
+  padding:12px 26px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.3);
+  background:rgba(255,255,255,0.1);
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+}
+.btn-glass:hover{animation:breatheRed 1.4s infinite}
+
+/* ===== ALERT LIST ===== */
+ul{list-style:none;padding:0}
+li{padding:6px 0}
+
+/* ===== ANIMATIONS ===== */
+@keyframes breatheFloatGreen{
+0%{box-shadow:0 0 14px rgba(0,255,140,.35)}
+50%{box-shadow:0 0 36px rgba(0,255,140,.8)}
+100%{box-shadow:0 0 14px rgba(0,255,140,.35)}
+}
+@keyframes pulseSoftRed{
+0%{box-shadow:0 0 20px rgba(255,60,60,.5)}
+50%{box-shadow:0 0 45px rgba(255,40,40,1)}
+100%{box-shadow:0 0 20px rgba(255,60,60,.5)}
+}
+@keyframes breatheRed{
+0%{box-shadow:0 0 12px rgba(255,60,60,.5)}
+50%{box-shadow:0 0 28px rgba(255,40,40,1)}
+100%{box-shadow:0 0 12px rgba(255,60,60,.5)}
+}
+</style>
+
+<div class="center"><h2 style="
+text-align:center;
+font-size:2.1rem;
+font-weight:700;
+margin-bottom:28px;
+color:#ffbe5c;
+animation:heatWave 2.2s ease-in-out infinite;
+">
+🔥 Smart Motion Heatmap • Real-Time Crowd Intelligence
+</h2>
+
+<style>
+@keyframes heatWave{
+0%,100%{text-shadow:0 0 10px rgba(255,140,0,0.35);}
+50%{text-shadow:0 0 26px rgba(255,60,0,0.85);}
+}
+</style>
+
+
+<!-- CCTV -->
+<div class="cctv">
+  <img src="/heatmap/stream/">
+</div>
+
+<!-- COMBINED SETTINGS + ALERTS -->
+<div class="glass">
+
+  <!-- LEFT: SETTINGS -->
+  <div class="settings-col">
+    <h3>Update Settings</h3>
 
     <form method="post" action="/heatmap/">
-        {% csrf_token %}
+    {% csrf_token %}
 
-        <label>Decay:</label>
-        <input type="number" step="0.01" name="decay" value="{{ decay }}">
+    <label>Decay</label>
+    <input class="input-glass" type="number" step="0.01" name="decay" value="{{decay}}">
 
-        <label>Gain:</label>
-        <input type="number" step="1" name="gain" value="{{ gain }}">
+    <label>Gain</label>
+    <input class="input-glass" type="number" step="1" name="gain" value="{{gain}}">
 
-        <label>Alert START Threshold:</label>
-        <input type="number" step="0.01" name="high" value="{{ high }}">
+    <label>Alert START Threshold</label>
+    <input class="input-glass" type="number" step="0.01" name="high" value="{{high}}">
 
-        <label>Alert STOP Threshold:</label>
-        <input type="number" step="0.01" name="low" value="{{ low }}">
+    <label>Alert STOP Threshold</label>
+    <input class="input-glass" type="number" step="0.01" name="low" value="{{low}}">
 
-        <button type="submit">Update</button>
+    <!-- CENTERED BUTTON -->
+    <div class="btn-center">
+      <button class="btn-glass">Update Settings</button>
+    </div>
+
     </form>
-</div>
+  </div>
 
-
-<!-- ===== ALERT HISTORY ===== -->
-<div class="card">
-    <h3>Last 10 Alerts</h3>
+  <!-- RIGHT: ALERT TIMES -->
+  <div class="alert-col">
+    <h3 style="margin-bottom: 20px;">Last Alerts</h3>
     <ul id="alert-list">
-        {% for a in alerts %}
-            <li>⚠ {{ a }}</li>
-        {% empty %}
-            <li>No alerts yet</li>
-        {% endfor %}
+      {% for a in alerts %}
+      <li>⚠ {{a}}</li>
+      {% empty %}
+      <li>No alerts</li>
+      {% endfor %}
     </ul>
+  </div>
+
+</div>
 </div>
 
-
-<!-- ===== LIVE AUTO-REFRESH ALERT LIST ===== -->
 <script>
-setInterval(() => {
-    fetch("/heatmap/")
-        .then(res => res.text())
-        .then(html => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, "text/html");
+/* ===== 12-HOUR TIME FORMAT ===== */
+function to12Hour(text){
+ if(!text) return text;
 
-            const newList = doc.getElementById("alert-list");
-            if (newList) {
-                document.getElementById("alert-list").innerHTML = newList.innerHTML;
-            }
-        });
-}, 2000);
+ let match=text.match(/(\d{2}:\d{2}:\d{2})/);
+ if(!match) return text;
+
+ let d=new Date("1970-01-01T"+match[1]);
+ let formatted=d.toLocaleTimeString([],{
+   hour:"numeric",
+   minute:"2-digit",
+   second:"2-digit",
+   hour12:true
+ });
+
+ return text.replace(match[1],formatted);
+}
+
+/* ===== AUTO REFRESH ALERTS ===== */
+setInterval(()=>{
+fetch("/heatmap/")
+.then(r=>r.text())
+.then(html=>{
+ const doc=new DOMParser().parseFromString(html,"text/html");
+ let items=doc.querySelectorAll("#alert-list li");
+
+ let ul=document.getElementById("alert-list");
+ ul.innerHTML="";
+
+ items.forEach(li=>{
+   let newLi=document.createElement("li");
+   newLi.textContent=to12Hour(li.textContent);
+   ul.appendChild(newLi);
+ });
+});
+},2000);
 </script>
 
 {% include "footer.html" %}

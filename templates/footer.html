@@ -1,5 +1,213 @@
-<footer style="margin-top:50px; text-align:center; padding:20px;">
-    <p>© 2026 Suraksha AI Surveillance System</p>
+</div> <!-- closes main container from header -->
+
+<style>
+/* ===== CENTER WRAPPER ===== */
+.footer-wrapper{
+    max-width:1200px;
+    margin:auto;
+    padding:0 20px;
+}
+
+/* ===== FOOTER IMAGES ===== */
+.footer_image{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    margin:70px auto 30px;
+    flex-wrap:wrap;
+    opacity:0.9;
+}
+
+/* ===== GLASS FOOTER ===== */
+.glass-footer{
+
+    background:rgba(255, 255, 255, 0.025);
+    backdrop-filter:blur(18px);
+
+    border:1px solid rgba(120,255,180,0.18);
+
+    box-shadow:
+        0 10px 40px rgba(0,0,0,0.6),
+        inset 0 0 20px rgba(120,255,180,0.05);
+
+    color:#cffff0;
+    padding:45px 0 25px;
+}
+
+/* ===== GRID ===== */
+.footer-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:40px;
+}
+
+/* ===== HEADINGS ===== */
+.glass-footer h5{
+    color:#9fffd2;
+    font-weight:600;
+    margin-bottom:14px;
+    transition:0.3s;
+}
+
+/* ===== TEXT ===== */
+.glass-footer p{
+    line-height:1.6;
+    font-size:0.95rem;
+    transition:0.3s;
+}
+
+/* ===== LINKS ===== */
+.glass-footer a{
+    color:#cffff0;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+/* ===== SOCIAL ===== */
+.footer-social{
+    display:flex;
+    gap:14px;
+    margin-bottom:15px;
+}
+
+.footer-social a{
+    font-size:18px;
+    transition:0.3s;
+}
+
+/* ===================================================== */
+/* 🔥 TEXT BREATH HOVER EFFECT (GREEN ↔ RED GLOW) */
+/* ===================================================== */
+
+.footer-grid h5:hover,
+.footer-grid p:hover,
+.footer-grid a:hover,
+.footer-social a:hover{
+    animation:textBreathe 1.8s ease-in-out infinite;
+}
+
+/* ===== TEXT BREATH KEYFRAME ===== */
+@keyframes textBreathe{
+    0%{
+        color:#9fffd2;
+        text-shadow:0 0 6px rgba(0,255,140,0.4);
+    }
+    50%{
+        color:#ff8a8a;
+        text-shadow:0 0 14px rgba(255,60,60,0.8);
+    }
+    100%{
+        color:#9fffd2;
+        text-shadow:0 0 6px rgba(0,255,140,0.4);
+    }
+}
+
+/* ===== TRANSLATE BUTTON ===== */
+.goog-te-gadget-simple{
+    background:rgba(255,255,255,0.08) !important;
+    border:1px solid rgba(120,255,180,0.35) !important;
+    border-radius:20px !important;
+    padding:6px 14px !important;
+    color:#eafff6 !important;
+    backdrop-filter:blur(10px);
+}
+
+.goog-logo-link{
+    display:none !important;
+}
+
+/* ===== FOOTER BOTTOM ===== */
+.footer-bottom{
+    margin-top:35px;
+    padding-top:18px;
+    border-top:1px solid rgba(255,255,255,0.12);
+    text-align:center;
+    color:#9edcff;
+    font-size:0.9rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:900px){
+    .footer-grid{
+        grid-template-columns:repeat(2, 1fr);
+    }
+}
+
+@media (max-width:500px){
+    .footer-grid{
+        grid-template-columns:1fr;
+        text-align:center;
+    }
+
+    .footer-social{
+        justify-content:center;
+    }
+}
+</style>
+
+{% load static %}
+
+
+<footer class="glass-footer">
+  <div class="footer-wrapper">
+
+    <div class="footer-grid">
+
+      <div>
+        <h5>About Suraksha</h5>
+        <p>
+          Suraksha AI delivers intelligent surveillance, worker monitoring,
+          and real-time security analytics powered by AI vision technology.
+        </p>
+      </div>
+
+      <div>
+        <h5>Quick Links</h5>
+        <p><a href="/">Dashboard</a></p>
+        <p><a href="/attendance/">Attendance</a></p>
+        <p><a href="/heatmap/">Heatmap</a></p>
+        <p><a href="/alert/">No-Entry Alert</a></p>
+        <p><a href="/wait/">Waiting Detection</a></p>
+      </div>
+
+      <div>
+        <h5>Contact</h5>
+        <p><i class="fas fa-map-marker-alt"></i> India</p>
+        <p><i class="fas fa-phone"></i> +91 9310625964</p>
+        <p><i class="fas fa-envelope"></i> amankumarjanuary@gmail.com</p>
+      </div>
+
+      <div>
+        <h5>Follow Us</h5>
+
+        <div class="footer-social">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://www.instagram.com/_aaryan__24/"><i class="fab fa-instagram"></i></a>
+          <a href="https://youtube.com/@aryavarta_twinbro"><i class="fab fa-youtube"></i></a>
+        </div>
+
+        <div id="google_translate_element"></div>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      © 2026 Suraksha Surveillance System · All Rights Reserved
+    </div>
+
+  </div>
 </footer>
+
+<script>
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    includedLanguages: 'en,hi,kn,ta,te,fr,es,de',
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+  }, 'google_translate_element');
+}
+</script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 </html>

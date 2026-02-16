@@ -2,3 +2,18 @@ cd ~/suraksha/service
 
 python3.10 -m venv faceenv310
 source faceenv310/bin/activate
+
+
+
+
+
+
+
+
+only this 
+
+source /Users/aryankumar/suraksha/faceenv310/bin/activate
+
+then 
+
+python manage.py runserver

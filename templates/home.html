@@ -1,14 +1,171 @@
 {% include "header.html" %}
 
-<h1>🛡 Suraksha AI Dashboard</h1>
+<style>
 
-<div class="card">
-    <h2>Monitoring Modules</h2>
+/* ===== PAGE TITLE ===== */
+.home-title{
+  text-align:center;
+  font-size:2.3rem;
+  font-weight:700;
+  margin:30px 0 40px 0;
+  color:#efff9f;
+  letter-spacing:1px;
+  animation:homePulse 3s ease-in-out infinite;
+}
 
-    <p><a href="/heatmap/"><button>Open Heatmap Monitoring</button></a></p>
-    <p><a href="/attendance/"><button>Open Face Attendance</button></a></p>
-    <p><a href="/alert/"><button>Open No-Entry Alert</button></a></p>
-    <p><a href="/wait/"><button>Open Waiting Alert</button></a></p>
+@keyframes homePulse{
+  0%,100%{
+    text-shadow:0 0 10px rgba(0,255,170,0.35);
+    transform:scale(1);
+  }
+  50%{
+    text-shadow:0 0 24px rgba(0,255,170,0.75);
+    transform:scale(1.03);
+  }
+}
+
+
+/* ===== GRID ===== */
+.monitor-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(320px, 810px));
+  justify-content:center;
+  align-items:start;
+  column-gap:60px;
+  row-gap:50px;
+  padding:10px 20px;
+}
+
+/* ===== BLOCK ===== */
+.monitor-block{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+  transition:transform 0.35s ease;
+  text-decoration:none;
+}
+
+/* ===== TITLE ===== */
+.monitor-title{
+  font-weight:600;
+  color:#9fffd2;
+  text-align:center;
+}
+
+/* ===== GLASS VIDEO CARD ===== */
+.monitor-box{
+  height:360px;
+  width:100%;
+  max-width:900px;
+
+  border-radius:18px;
+  overflow:hidden;
+
+  background:rgba(0,0,0,0.35);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(120,255,180,0.25);
+
+  animation:breatheFloatGreen 5s ease-in-out infinite;
+  transition:box-shadow 0.35s ease;
+}
+
+/* ===== ALTERNATING BREATH DELAYS ===== */
+.monitor-block:nth-child(2) .monitor-box{ animation-delay:1s; }
+.monitor-block:nth-child(3) .monitor-box{ animation-delay:2s; }
+.monitor-block:nth-child(4) .monitor-box{ animation-delay:3s; }
+
+/* ===== HOVER ===== */
+.monitor-block:hover{ transform:scale(1.05); }
+.monitor-block:hover .monitor-box{
+  animation:pulseSoftRed 1.2s ease-in-out infinite;
+}
+
+/* ===== VIDEO ===== */
+.monitor-box img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes breatheFloatGreen{
+  0%{
+    transform:translateY(0px) scale(1);
+    box-shadow:0 0 14px rgba(0,255,140,0.35);
+  }
+  50%{
+    transform:translateY(-6px) scale(1.03);
+    box-shadow:0 0 32px rgba(0,255,140,0.7);
+  }
+  100%{
+    transform:translateY(0px) scale(1);
+    box-shadow:0 0 14px rgba(0,255,140,0.35);
+  }
+}
+
+@keyframes pulseSoftRed{
+  0%{ box-shadow:0 0 18px rgba(255,70,70,0.55); }
+  50%{ box-shadow:0 0 40px rgba(255,40,40,0.95); }
+  100%{ box-shadow:0 0 18px rgba(255,70,70,0.55); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:1100px){
+  .monitor-grid{
+    grid-template-columns:1fr;
+    row-gap:40px;
+  }
+}
+
+@media (max-width:600px){
+  .monitor-box{ height:280px; }
+}
+
+</style>
+
+
+<!-- ===== TITLE OUTSIDE GRID ===== -->
+<h1 class="home-title">
+🛡️ Suraksha • Intelligent Smart Surveillance Hub
+</h1>
+
+
+<!-- ===== GRID START ===== -->
+<div class="monitor-grid">
+
+  <!-- FACE ATTENDANCE -->
+  <a href="/attendance/" class="monitor-block">
+    <div class="monitor-title">👤 Face Attendance Monitoring</div>
+    <div class="monitor-box">
+      <img src="/attendance/stream/" alt="Face Attendance">
+    </div>
+  </a>
+
+  <!-- HEATMAP -->
+  <a href="/heatmap/" class="monitor-block">
+    <div class="monitor-title">🔥 Motion Heatmap Detection</div>
+    <div class="monitor-box">
+      <img src="/heatmap/stream/" alt="Heatmap">
+    </div>
+  </a>
+
+  <!-- NO ENTRY -->
+  <a href="/alert/" class="monitor-block">
+    <div class="monitor-title">🚫 Restricted Area Alert</div>
+    <div class="monitor-box">
+      <img src="/alert/stream/" alt="No Entry">
+    </div>
+  </a>
+
+  <!-- WAITING -->
+  <a href="/wait/" class="monitor-block">
+    <div class="monitor-title">⏳ Suspicious Waiting Detection</div>
+    <div class="monitor-box">
+      <img src="/wait/stream/" alt="Waiting Zone">
+    </div>
+  </a>
+
 </div>
 
 {% include "footer.html" %}

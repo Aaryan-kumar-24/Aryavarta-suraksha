@@ -1,58 +1,180 @@
 {% include "header.html" %}
 
-<h2>👤 Face Recognition Attendance</h2>
+<style>
+.page-center{text-align:center}
 
-<!-- CAMERA STREAM -->
-<img src="/attendance/stream/" class="video-frame">
+/* ===== BIG CCTV WINDOW ===== */
+.cctv{
+  width:1100px;
+  height:620px;
+  margin:30px auto;
+  border-radius:18px;
+  overflow:hidden;
+  background:rgba(0,0,0,0.35);
+  border:1px solid rgba(120,255,180,0.25);
+  backdrop-filter:blur(12px);
+  animation:breatheFloatGreen 5s ease-in-out infinite;
+}
+.cctv:hover{animation:pulseSoftRed 1.2s ease-in-out infinite;}
+.cctv img{width:100%;height:100%;object-fit:cover}
 
-<!-- REGISTER PERSON -->
-<div class="card">
-    <h3>Register New Person</h3>
+/* ===== REGISTER AREA ===== */
+.register-area{ margin:40px auto; }
 
-    <form method="post" action="/register-face/">
-        {% csrf_token %}
-        <input type="text" name="name" placeholder="Enter name" required>
-        <button type="submit">Capture Face</button>
-    </form>
+/* ===== GLASS INPUT (ALWAYS GLASS) ===== */
+.input-name{
+  width:420px;
+  padding:14px 16px;
+  border-radius:14px;
+  border:1px solid rgba(120,255,180,0.35);
+  background:rgba(255,255,255,0.08) !important;
+  color:white !important;
+  outline:none;
+  backdrop-filter:blur(8px);
+  transition:all 0.3s ease;
+}
+
+/* prevent white autofill */
+.input-name:-webkit-autofill,
+.input-name:-webkit-autofill:hover,
+.input-name:-webkit-autofill:focus{
+  -webkit-text-fill-color:white;
+  -webkit-box-shadow:0 0 0px 1000px rgba(255,255,255,0.08) inset;
+  transition:background-color 9999s ease-in-out 0s;
+}
+
+/* focus glow */
+.input-name:focus{
+  border-color:#00ffb3;
+  box-shadow:0 0 16px rgba(0,255,179,0.6);
+  transform:scale(1.04);
+}
+
+/* ===== BUTTON ===== */
+.btn-glass{
+  margin-left:16px;
+  padding:12px 22px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.3);
+  background:rgba(255,255,255,0.1);
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+}
+.btn-glass:hover{ animation:breatheRed 1.4s infinite; }
+
+/* ===== TABLE CARD ===== */
+.glass-card{
+  max-width:900px;
+  margin:65px auto;
+  padding:24px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(120,255,180,0.25);
+  backdrop-filter:blur(12px);
+}
+
+/* ===== TABLE ===== */
+table{width:100%;border-collapse:collapse;margin-top:12px}
+th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.2);text-align:center}
+th{color:#9fffd2}
+
+/* ===== ANIMATIONS ===== */
+@keyframes breatheFloatGreen{
+0%{box-shadow:0 0 14px rgba(0,255,140,0.35)}
+50%{box-shadow:0 0 36px rgba(0,255,140,0.8)}
+100%{box-shadow:0 0 14px rgba(0,255,140,0.35)}
+}
+@keyframes pulseSoftRed{
+0%{box-shadow:0 0 20px rgba(255,60,60,0.5)}
+50%{box-shadow:0 0 45px rgba(255,40,40,1)}
+100%{box-shadow:0 0 20px rgba(255,60,60,0.5)}
+}
+@keyframes breatheRed{
+0%{box-shadow:0 0 12px rgba(255,60,60,0.5)}
+50%{box-shadow:0 0 28px rgba(255,40,40,1)}
+100%{box-shadow:0 0 12px rgba(255,60,60,0.5)}
+}
+</style>
+
+<div class="page-center"><h2 style="
+text-align:center;
+font-size:2.1rem;
+font-weight:700;
+margin-bottom:28px;
+color:#bfffe9;
+animation:scanGlow 2.6s ease-in-out infinite;
+">
+👁️‍🗨️ AI Face Recognition • Live Attendance Tracking
+</h2>
+
+<style>
+@keyframes scanGlow{
+0%,100%{text-shadow:0 0 8px rgba(0,255,170,0.3);}
+50%{text-shadow:0 0 22px rgba(0,255,170,0.7);}
+}
+</style>
+
+
+<!-- CCTV -->
+<div class="cctv">
+  <img src="/attendance/stream/">
 </div>
 
-<!-- ATTENDANCE TABLE -->
-<div class="card">
-    <h3>Detected Attendance</h3>
+<!-- REGISTER -->
+<div class="register-area">
+<form method="post" action="/register-face/">
+{% csrf_token %}
+<input class="input-name" name="name" placeholder="Enter student name" required>
+<button class="btn-glass">Capture Face</button>
+</form>
+</div>
 
-    <table id="att-table">
-        <tr>
-            <th>Name</th>
-            <th>Last Seen Time</th>
-        </tr>
-    </table>
+<!-- TABLE -->
+<div class="glass-card">
+<h3>Detected Attendance</h3>
+<table id="att-table">
+<tr><th>Name</th><th>Last Seen Time</th></tr>
+</table>
+</div>
 </div>
 
 <script>
-function loadAttendance() {
-    fetch("/attendance/data/")
-        .then(res => res.json())
-        .then(data => {
-            let rows = `
-                <tr>
-                    <th>Name</th>
-                    <th>Last Seen Time</th>
-                </tr>
-            `;
+/* ===== CONVERT TO 12-HOUR CLOCK ===== */
+function format12Hour(timeStr){
+  if(!timeStr) return "";
 
-            if (data.length === 0) {
-                rows += `<tr><td colspan="2">No attendance yet</td></tr>`;
-            } else {
-                data.forEach(p => {
-                    rows += `<tr><td>${p.name}</td><td>${p.time}</td></tr>`;
-                });
-            }
+  let d = new Date("1970-01-01T" + timeStr);
+  if(isNaN(d)) return timeStr;
 
-            document.getElementById("att-table").innerHTML = rows;
-        });
+  return d.toLocaleTimeString([],{
+    hour:'numeric',
+    minute:'2-digit',
+    second:'2-digit',
+    hour12:true
+  });
 }
 
-setInterval(loadAttendance, 2000);
+/* ===== LOAD ATTENDANCE ===== */
+function loadAttendance(){
+fetch("/attendance/data/")
+.then(r=>r.json())
+.then(data=>{
+let rows=`<tr><th>Name</th><th>Last Seen Time</th></tr>`;
+
+if(data.length===0){
+rows+=`<tr><td colspan="2">No attendance yet</td></tr>`;
+}else{
+data.forEach(p=>{
+rows+=`<tr><td>${p.name}</td><td>${format12Hour(p.time)}</td></tr>`;
+});
+}
+
+document.getElementById("att-table").innerHTML=rows;
+});
+}
+
+setInterval(loadAttendance,2000);
 loadAttendance();
 </script>
 

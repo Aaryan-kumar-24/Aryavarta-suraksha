@@ -1,88 +1,192 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Suraksha AI Surveillance</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suraksha AI</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #0f172a;
-            color: white;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
 
-        nav {
-            background: #020617;
-            padding: 15px 25px;
-        }
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
 
-        nav a {
-            color: #38bdf8;
-            margin-right: 20px;
-            text-decoration: none;
-            font-weight: bold;
-        }
+/* ===== GRADIENT BACKGROUND CONTINUATION ===== */
+body{
+  min-height:100vh;
+  color:#e6f7ff;
 
-        nav a:hover {
-            color: #22c55e;
-        }
+  /* Base dark layer */
+  background-color:#050d18;
 
-        .container {
-            padding: 30px;
-            text-align: center;
-        }
+  /* Decreasing glass gradient from top → bottom */
+  background-image:linear-gradient(
+    to bottom,
+    rgba(10, 25, 40, 0.04) 0%,   /* strong glass at top */
+    rgba(10, 25, 40, 0.05) 35%,
+    rgba(10, 25, 40, 0.08) 65%,
+    rgba(10, 25, 40, 0.09) 85%,
+    rgba(10, 25, 40, 0.01) 100%  /* almost transparent */
+  );
 
-        .video-frame {
-            width: 100%;
-            max-width: 900px;
-            border: 4px solid #22c55e;
-            border-radius: 12px;
-            margin-top: 20px;
-        }
+  background-repeat:no-repeat;
+  background-attachment:fixed;   /* smooth cinematic depth */
+}
 
-        .card {
-            background: #020617;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 25px;
-        }
 
-        button {
-            padding: 10px 18px;
-            background: #22c55e;
-            border: none;
-            color: white;
-            cursor: pointer;
-            border-radius: 8px;
-            font-weight: bold;
-        }
 
-        input {
-            padding: 10px;
-            border-radius: 6px;
-            border: none;
-            margin-right: 10px;
-        }
 
-        ul {
-            list-style: none;
-            padding: 0;
-        }
+/* ===== TRUE GRADIENT GLASS HEADER ===== */
+.glass-header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  padding:16px 20px;
+  border-radius:22px;
 
-        li {
-            padding: 6px 0;
-        }
-    </style>
+  /* Glass blur */
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+
+  /* Gradient glass overlay */
+  background:linear-gradient(
+    to bottom,
+    rgba(10, 25, 40, 0.04) 0%,   /* strong glass at top */
+    rgba(10, 25, 40, 0.05) 35%,
+    rgba(10, 25, 40, 0.08) 65%,
+    rgba(10, 25, 40, 0.09) 85%,
+    rgba(10, 25, 40, 0.01) 100% 
+  );
+
+  box-shadow:0 8px 30px rgba(0,0,0,0.35);
+}
+
+
+/* ===== FLEX LAYOUT ===== */
+.navbar-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+}
+
+/* ===== LOGO ===== */
+.logo{
+  font-size:1.35rem;
+  font-weight:700;
+  letter-spacing:1px;
+  color:#ffffff;
+  opacity:0.92;
+}
+
+/* ===== NAV LINKS ===== */
+.nav-links{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+}
+
+/* ===== GLASS BUTTON ===== */
+.nav-btn{
+  background:rgba(255,255,255,0.10);
+  border:1px solid rgba(255,255,255,0.25);
+  color:#ffffff;
+
+  padding:10px 18px;
+  border-radius:14px;
+
+  font-size:0.9rem;
+  font-weight:600;
+
+  backdrop-filter:blur(12px);
+  transition:all 0.25s ease;
+}
+
+/* ===== ACTIVE TAB (RED BREATH) ===== */
+.active-tab{
+  background:rgba(255,0,0,0.12);
+  border:1px solid rgba(255,70,70,0.65);
+  animation:breatheRed 1.6s ease-in-out infinite;
+}
+
+/* ===== HOVER (GREEN BREATH) ===== */
+.nav-btn:not(.active-tab):hover{
+  transform:translateY(-2px) scale(1.05);
+  background:rgba(0,255,170,0.12);
+  border:1px solid rgba(0,255,170,0.5);
+  animation:breatheGreen 3.2s ease-in-out infinite;
+}
+
+/* ===== GREEN BREATH ===== */
+@keyframes breatheGreen{
+  0%{ box-shadow:0 0 10px rgba(0,255,170,0.35); }
+  50%{ box-shadow:0 0 26px rgba(0,255,170,0.75); }
+  100%{ box-shadow:0 0 10px rgba(0,255,170,0.35); }
+}
+
+/* ===== RED BREATH ===== */
+@keyframes breatheRed{
+  0%{ box-shadow:0 0 14px rgba(255,60,60,0.55); }
+  50%{ box-shadow:0 0 36px rgba(255,30,30,0.95); }
+  100%{ box-shadow:0 0 14px rgba(255,60,60,0.55); }
+}
+
+/* ===== PAGE CONTAINER ===== */
+.main-container{
+  max-width:1400px;
+  margin:auto;
+  padding:30px 20px 60px;
+}
+</style>
 </head>
 
 <body>
 
-<nav>
-    <a href="/">Home</a>
-    <a href="/heatmap/">Heatmap</a>
-    <a href="/attendance/">Attendance</a>
-    <a href="/alert/">No-Entry Alert</a>
-    <a href="/wait/">Waiting Alert</a>
-</nav>
+<!-- ===== GLASS HEADER ===== -->
+<div class="glass-header">
+  <div class="navbar-inner">
 
-<div class="container">
+    <div class="logo">🛡 Suraksha</div>
+
+    <div class="nav-links">
+
+      <a href="/">
+        <button class="nav-btn {% if request.path == '/' %}active-tab{% endif %}">
+          <i class="fa-solid fa-table"></i> Dashboard
+        </button>
+      </a>
+
+      <a href="/attendance/">
+        <button class="nav-btn {% if request.path == '/attendance/' %}active-tab{% endif %}">
+          <i class="fa-solid fa-user-check"></i> Attendance
+        </button>
+      </a>
+
+      <a href="/heatmap/">
+        <button class="nav-btn {% if request.path == '/heatmap/' %}active-tab{% endif %}">
+          <i class="fa-solid fa-fire"></i> Heatmap
+        </button>
+      </a>
+
+      <a href="/alert/">
+        <button class="nav-btn {% if request.path == '/alert/' %}active-tab{% endif %}">
+          <i class="fa-solid fa-triangle-exclamation"></i> No-Entry
+        </button>
+      </a>
+
+      <a href="/wait/">
+        <button class="nav-btn {% if request.path == '/wait/' %}active-tab{% endif %}">
+          <i class="fa-solid fa-clock"></i> Waiting
+        </button>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<div class="main-container">

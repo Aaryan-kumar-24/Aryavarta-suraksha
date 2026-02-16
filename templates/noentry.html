@@ -1,215 +1,305 @@
 {% include "header.html" %}
 
-<div style="text-align:center">
+<style>
+.center{text-align:center}
 
-<h2>🚫 No-Entry Detection</h2>
+/* ===== CCTV ===== */
+.cctvWrap{
+  width:1100px;
+  height:620px;
+  margin:30px auto;
+  position:relative;
+}
+.cctv{
+  width:100%;height:100%;
+  border-radius:18px;
+  overflow:hidden;
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(120,255,180,.25);
+  backdrop-filter:blur(12px);
+  animation:breatheFloatGreen 5s infinite;
+}
+.cctv:hover{animation:pulseSoftRed 1.2s infinite;}
+.cctv img{width:100%;height:100%;object-fit:cover}
 
-<!-- ================= FIXED LARGE CCTV WINDOW ================= -->
-<div style="
-    position:relative;
-    display:inline-block;
-    width:900px;
-    height:650px;
-    background:black;
-    border-radius:12px;
-    overflow:hidden;
+/* ===== MAIN GLASS CARD ===== */
+.glass{
+  max-width:1150px;
+  margin:40px auto;
+  padding:36px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(120,255,180,0.25);
+  backdrop-filter:blur(12px);
+
+  display:flex;
+  gap:70px;
+}
+
+/* ===== LEFT PANEL (CENTERED) ===== */
+.left{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:26px;
+}
+
+/* ===== RIGHT PANEL ===== */
+.right{
+  flex:1.2;
+  border-left:1px solid rgba(255,255,255,0.15);
+  padding-left:36px;
+}
+
+/* ===== LARGE INPUT ===== */
+.input-glass{
+  width:320px;
+  padding:16px 20px;
+  border-radius:16px;
+  border:1px solid rgba(120,255,180,0.35);
+  background:rgba(255,255,255,0.08);
+  color:white;
+  font-size:1.1rem;
+  outline:none;
+  text-align:center;
+  transition:.25s;
+}
+.input-glass:focus{
+  border-color:#00ffb3;
+  box-shadow:0 0 18px rgba(0,255,179,0.75);
+  transform:scale(1.06);
+}
+
+/* ===== LARGE BUTTON ===== */
+.btn{
+  width:320px;
+  padding:16px 20px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,0.3);
+  background:rgba(255,255,255,0.1);
+  color:white;
+  cursor:pointer;
+  font-size:1.1rem;
+  font-weight:600;
+  transition:.25s;
+}
+.btn:hover{animation:breatheRed 1.4s infinite}
+
+/* ===== STACK ===== */
+.stack{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:24px;
+}
+
+/* ===== ALERT LIST ===== */
+ul{list-style:none;padding:0}
+li{padding:10px 0;font-size:1rem}
+
+/* ===== ANIMATIONS ===== */
+@keyframes breatheFloatGreen{
+0%{box-shadow:0 0 14px rgba(0,255,140,.35)}
+50%{box-shadow:0 0 36px rgba(0,255,140,.8)}
+100%{box-shadow:0 0 14px rgba(0,255,140,.35)}
+}
+@keyframes pulseSoftRed{
+0%{box-shadow:0 0 20px rgba(255,60,60,.5)}
+50%{box-shadow:0 0 45px rgba(255,40,40,1)}
+100%{box-shadow:0 0 20px rgba(255,60,60,.5)}
+}
+@keyframes breatheRed{
+0%{box-shadow:0 0 12px rgba(255,60,60,.5)}
+50%{box-shadow:0 0 28px rgba(255,40,40,1)}
+100%{box-shadow:0 0 12px rgba(255,60,60,.5)}
+}
+</style>
+
+<div class="center"><h2 style="
+text-align:center;
+font-size:2.1rem;
+font-weight:700;
+margin-bottom:28px;
+color:#ff7a7a;
+animation:alertFlash 1.8s ease-in-out infinite;
 ">
+🚨 Restricted Zone Protection • Instant Intrusion Alerts
+</h2>
 
-    <!-- NORMAL VIDEO -->
-    <img id="liveVideo"
-         src="/alert/stream/"
-         style="width:100%; height:100%; object-fit:cover;">
+<style>
+@keyframes alertFlash{
+0%,100%{opacity:1; text-shadow:0 0 10px rgba(255,70,70,0.4);}
+50%{opacity:0.85; text-shadow:0 0 26px rgba(255,0,0,0.9);}
+}
+</style>
 
-    <!-- CONFIG MODE -->
-    <div id="configMode"
-         style="display:none; position:absolute; inset:0;">
+<!-- CCTV -->
+<div class="cctvWrap">
+  <div class="cctv">
+    <img id="liveVideo" src="/alert/stream/">
+  </div>
 
-        <img src="/alert/stream/"
-             style="width:100%; height:100%; object-fit:cover;">
+  <div id="configMode" style="display:none;position:absolute;inset:0;">
+    <img src="/alert/stream/" style="width:100%;height:100%;object-fit:cover">
+    <canvas id="canvas" width="1100" height="620" style="position:absolute;inset:0"></canvas>
+  </div>
+</div>
 
-        <canvas id="canvas"
-                width="900"
-                height="650"
-                style="position:absolute; inset:0;">
-        </canvas>
+<!-- SPLIT CARD -->
+<div class="glass">
+
+  <!-- LEFT -->
+  <div class="left">
+
+    <!-- DEFAULT -->
+    <div id="defaultBtns" class="stack">
+      <button class="btn" onclick="toggleConfig()">⚙ Configure Rectangle</button>
+      <button class="btn" onclick="clearAll()">🗑 Clear All</button>
     </div>
-</div>
 
-<br><br>
+    <!-- CONFIG -->
+    <div id="configBtns" class="stack" style="display:none;">
+      <label>Threshold</label>
+      <input id="globalThreshold" class="input-glass" type="number" value="500">
 
-<!-- ================= DEFAULT BUTTONS ================= -->
-<div id="defaultBtns">
-    <button onclick="toggleConfig()">⚙ Configure Rectangle</button>
-    <button onclick="clearAll()">🗑 Clear All Rectangles</button>
-</div>
+      <button class="btn" onclick="updateThreshold()">Update</button>
+      <button class="btn" onclick="toggleConfig()">Close</button>
+    </div>
 
-<!-- ================= CONFIG BUTTONS ================= -->
-<div id="configBtns" style="display:none;">
-    Threshold:
-    <input type="number" id="globalThreshold" value="500" style="width:90px;">
+  </div>
 
-    <button onclick="updateThreshold()">Update Threshold</button>
-    <button onclick="saveConfig()">💾 Save Configuration</button>
-    <button onclick="toggleConfig()">❌ Close</button>
-</div>
-
-<h3>Recent Alerts</h3>
-<ul id="alertList"></ul>
+  <!-- RIGHT -->
+  <div class="right">
+    <h3>Recent Alerts</h3>
+    <ul id="alertList"></ul>
+  </div>
 
 </div>
-
+</div>
 
 <script>
-let canvas = document.getElementById("canvas");
-let ctx = canvas.getContext("2d");
+let canvas=document.getElementById("canvas");
+let ctx=canvas.getContext("2d");
 
-let boxes = [];
-let bw = 0.2;
-let bh = 0.2;
+let boxes=[]; let bw=0.2; let bh=0.2;
 
-
-/* ================= LOAD CONFIG FROM BACKEND ================= */
 async function loadConfig(){
-    const r = await fetch("/alert/get-config/");
-    const data = await r.json();
-
-    boxes = data.boxes || [];
-    bw = data.bw;
-    bh = data.bh;
-
-    document.getElementById("globalThreshold").value = data.threshold;
-    draw();
+ const r=await fetch("/alert/get-config/");
+ const data=await r.json();
+ boxes=data.boxes||[]; bw=data.bw; bh=data.bh;
+ document.getElementById("globalThreshold").value=data.threshold;
+ draw();
 }
 
-
-/* ================= TOGGLE CONFIG MODE ================= */
 async function toggleConfig(){
+ let video=document.getElementById("liveVideo");
+ let config=document.getElementById("configMode");
+ let dBtns=document.getElementById("defaultBtns");
+ let cBtns=document.getElementById("configBtns");
 
-    let video = document.getElementById("liveVideo");
-    let config = document.getElementById("configMode");
-    let dBtns = document.getElementById("defaultBtns");
-    let cBtns = document.getElementById("configBtns");
-
-    if(config.style.display === "none"){
-
-        await fetch("/alert/set-mode/", {
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({config:true})
-        });
-
-        video.style.visibility = "hidden";
-        config.style.display = "block";
-
-        dBtns.style.display = "none";
-        cBtns.style.display = "block";
-
-        await loadConfig();
-
-    } else {
-
-        await fetch("/alert/set-mode/", {
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({config:false})
-        });
-
-        config.style.display = "none";
-        video.style.visibility = "visible";
-
-        dBtns.style.display = "block";
-        cBtns.style.display = "none";
-    }
+ if(config.style.display==="none"){
+   await fetch("/alert/set-mode/",{
+     method:"POST",
+     headers:{"Content-Type":"application/json"},
+     body:JSON.stringify({config:true})
+   });
+   video.style.visibility="hidden";
+   config.style.display="block";
+   dBtns.style.display="none";
+   cBtns.style.display="flex";
+   await loadConfig();
+ }else{
+   await fetch("/alert/set-mode/",{
+     method:"POST",
+     headers:{"Content-Type":"application/json"},
+     body:JSON.stringify({config:false})
+   });
+   config.style.display="none";
+   video.style.visibility="visible";
+   dBtns.style.display="flex";
+   cBtns.style.display="none";
+ }
 }
 
+canvas.onclick=function(e){
+ let rect=canvas.getBoundingClientRect();
+ let x=(e.clientX-rect.left)/canvas.width;
+ let y=(e.clientY-rect.top)/canvas.height;
 
-/* ================= ADD / DELETE RECTANGLE ================= */
-canvas.onclick = function(e){
-    let rect = canvas.getBoundingClientRect();
-    let x = (e.clientX - rect.left) / canvas.width;
-    let y = (e.clientY - rect.top) / canvas.height;
-
-    for(let i=0;i<boxes.length;i++){
-        let b = boxes[i];
-        if(x>b[0] && x<b[0]+bw && y>b[1] && y<b[1]+bh){
-            boxes.splice(i,1);
-            draw();
-            return;
-        }
-    }
-
-    boxes.push([x,y]);
-    draw();
+ for(let i=0;i<boxes.length;i++){
+   let b=boxes[i];
+   if(x>b[0]&&x<b[0]+bw&&y>b[1]&&y<b[1]+bh){
+     boxes.splice(i,1); draw(); return;
+   }
+ }
+ boxes.push([x,y]); draw();
 };
 
-
-/* ================= DRAW RECTANGLES ================= */
 function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    ctx.strokeStyle="red";
-    ctx.lineWidth=2;
-
-    boxes.forEach(b=>{
-        ctx.strokeRect(
-            b[0]*canvas.width,
-            b[1]*canvas.height,
-            bw*canvas.width,
-            bh*canvas.height
-        );
-    });
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+ ctx.strokeStyle="red"; ctx.lineWidth=2;
+ boxes.forEach(b=>{
+   ctx.strokeRect(b[0]*canvas.width,b[1]*canvas.height,bw*canvas.width,bh*canvas.height);
+ });
 }
 
-
-/* ================= SAVE CONFIG ================= */
-function saveConfig(){
-    fetch("/alert/config/",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-            boxes:boxes,
-            threshold:document.getElementById("globalThreshold").value,
-            bw:bw,
-            bh:bh
-        })
-    }).then(toggleConfig);
-}
-
-
-/* ================= UPDATE THRESHOLD ONLY ================= */
+/* ===== UPDATE → SAVE + CLOSE ===== */
 function updateThreshold(){
-    saveConfig();
+ fetch("/alert/config/",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+     boxes:boxes,
+     threshold:document.getElementById("globalThreshold").value,
+     bw:bw, bh:bh
+   })
+ }).then(toggleConfig);
 }
 
-
-/* ================= CLEAR ALL RECTANGLES ================= */
+/* ✅ FIXED CLEAR ALL (sync with backend) */
 function clearAll(){
-    boxes = [];
-    draw();
-    saveConfig();
+ boxes = [];
+ draw();
+
+ fetch("/alert/config/",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+     boxes:[],
+     threshold:document.getElementById("globalThreshold")?.value || 500,
+     bw:bw,
+     bh:bh
+   })
+ });
 }
 
+/* ===== 12-hour alert time ===== */
+function to12Hour(t){
+ let d=new Date("1970-01-01T"+t);
+ return d.toLocaleTimeString([],{
+   hour:"numeric",
+   minute:"2-digit",
+   second:"2-digit",
+   hour12:true
+ });
+}
 
-/* ================= LIVE ALERT HISTORY ================= */
 function loadAlerts(){
-    fetch("/alert/data/")
-    .then(r=>r.json())
-    .then(data=>{
-        let ul = document.getElementById("alertList");
-        ul.innerHTML = "";
-
-        data.slice().reverse().forEach(t=>{
-            let li = document.createElement("li");
-            li.innerText = "⚠ Alert at " + t;
-            ul.appendChild(li);
-        });
-    });
+ fetch("/alert/data/")
+ .then(r=>r.json())
+ .then(data=>{
+   let ul=document.getElementById("alertList");
+   ul.innerHTML="";
+   data.slice().reverse().forEach(t=>{
+     let li=document.createElement("li");
+     li.innerText="⚠ Alert at "+to12Hour(t);
+     ul.appendChild(li);
+   });
+ });
 }
 
-setInterval(loadAlerts, 2000);
-
-
-/* ================= INITIAL LOAD ================= */
+setInterval(loadAlerts,2000);
 loadConfig();
 </script>
 
