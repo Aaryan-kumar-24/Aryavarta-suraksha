@@ -14,8 +14,25 @@ def stream(gen):
 
 
 # ================= HOME =================
+# ================= HOME =================
 def home(request):
-    return render(request, "home.html")
+    context = {
+        "heat_alerts": list(reversed(heat.alerts[-10:])),
+        "noentry_alerts": list(reversed(alert.alerts[-10:])),
+        "wait_alerts": list(reversed(wait.alerts[-10:])),
+        "attendance": att.get_attendance()
+    }
+    return render(request, "home.html", context)
+
+# ================= REPORT API =================
+def report_data(request):
+    return JsonResponse({
+        "heat": list(reversed(heat.alerts[-10:])),
+        "noentry": list(reversed(alert.alerts[-10:])),
+        "wait": list(reversed(wait.alerts[-10:])),
+        "attendance": att.get_attendance()
+    })
+
 
 
 # ================= HEATMAP =================

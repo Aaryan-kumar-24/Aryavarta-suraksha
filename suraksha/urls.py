@@ -34,5 +34,7 @@ urlpatterns = [
     path("wait/get-config/", views.wait_get_config),
     path("wait/set-mode/", views.wait_set_mode),
     path("wait/reset/", views.wait_reset),
+    path("report/data/", views.report_data),
+
 
 ]

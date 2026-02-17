@@ -37,8 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
+    'service.apps.ServiceConfig',   # ⭐ IMPORTANT
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -116,3 +118,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
+
+# ================= EMAIL SETTINGS =================
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'amankumarjanuary@gmail.com'   # your gmail
+EMAIL_HOST_PASSWORD = 'gfbw caar bsan wqlm'  # ⚠️ change this now
+
+
+# ================= TIMEZONE FIX =================
+
+TIME_ZONE = 'Asia/Kolkata'
+USE_TZ = True

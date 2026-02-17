@@ -55,6 +55,7 @@ def generate_frames():
             continue
 
         ret, img = cap.read()
+        img = cv2.flip(img, 1) 
         if not ret:
             continue
 

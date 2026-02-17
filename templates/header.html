@@ -142,6 +142,31 @@ body{
   margin:auto;
   padding:30px 20px 60px;
 }
+
+/* ===== LOGO + TITLE WRAPPER ===== */
+.logo-wrap{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+/* Logo image */
+.logo-img{
+  height:38px;
+  width:38px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+/* Suraksha text */
+.logo-text{
+  font-size:1.35rem;
+  font-weight:700;
+  letter-spacing:1px;
+  color:#ffffff;
+  opacity:0.92;
+}
+
 </style>
 </head>
 
@@ -150,8 +175,13 @@ body{
 <!-- ===== GLASS HEADER ===== -->
 <div class="glass-header">
   <div class="navbar-inner">
+{% load static %}
 
-    <div class="logo">🛡 Suraksha</div>
+<div class="logo-wrap">
+  <img src="{% static 'logo.jpg' %}" class="logo-img" alt="Logo">
+  <div class="logo-text">Aryavarta Suraksha</div>
+</div>
+
 
     <div class="nav-links">
 

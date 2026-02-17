@@ -48,6 +48,7 @@ def generate_frames():
 
     while True:
         ret, img = cap.read()
+        img = cv2.flip(img, 1) 
         if not ret:
             continue
 
