@@ -77,7 +77,7 @@ Automated email alert system
 
 Live monitoring dashboard using Django MVT architecture
 
-🛠 Tech Stack
+🛠 Technology Stack
 Frontend
 
 HTML5
@@ -255,7 +255,7 @@ wait_config.pkl
                            v
                 +----------------------+
                 |  AI Vision Engine    |
-                |     (OpenCV)         |
+                |      (OpenCV)        |
                 +----------+-----------+
                            |
                            v
@@ -377,15 +377,15 @@ Clone repository
 
 git clone https://github.com/Aaryan-kumar-24/aryavarta-suraksha.git
 
-Navigate
+Navigate to project
 
 cd suraksha
 
-Create environment
+Create virtual environment
 
 python3 -m venv faceenv310
 
-Activate
+Activate environment
 
 source faceenv310/bin/activate
 
@@ -410,7 +410,7 @@ Cloud video storage
 
 Real-time mobile alerts
 
-Edge AI deployment (NVIDIA Jetson)
+Edge AI deployment using NVIDIA Jetson
 
 👨‍💻 Author
 
