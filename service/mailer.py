@@ -28,7 +28,7 @@ def get_latest_alert():
 
 def send_alert_email(message):
     send_mail(
-        subject="🚨 Farm Security Alert",
+        subject="🚨 Security Alert",
         message=message,
         from_email=settings.EMAIL_HOST_USER,
         recipient_list=["skilldevelopnment@gmail.com"],
