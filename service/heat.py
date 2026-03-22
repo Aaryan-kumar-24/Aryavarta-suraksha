@@ -142,7 +142,7 @@ def generate_frames():
             pulse_phase += 0.2
             glow = int((np.sin(pulse_phase) + 1) * 40)
 
-            box_w, box_h = 520, 110
+            box_w, box_h = 720, 110
             x1 = (w - box_w) // 2
             y1 = h - box_h - 30
 
@@ -152,7 +152,7 @@ def generate_frames():
                           (255, 255, 255), 4)
 
             cv2.putText(blended, "DANGER DETECTED", (x1 + 60, y1 + 70),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1.3, (255, 255, 255), 4)
+                        cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 4)
 
             timestamp = datetime.now(LOCAL_TZ).strftime("%H:%M:%S")
 

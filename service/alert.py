@@ -93,7 +93,7 @@ def generate_frames():
 
             text = "⚠ ALERT DETECTED"
             font = cv2.FONT_HERSHEY_SIMPLEX
-            scale = 1.4
+            scale = 3
             thickness = 3
 
             # Get text size for centering

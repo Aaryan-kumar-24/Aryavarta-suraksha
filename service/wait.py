@@ -110,7 +110,7 @@ def generate_frames():
         if alert_flag:
             text = "⏳ WAIT ALERT"
             font = cv2.FONT_HERSHEY_SIMPLEX
-            scale = 1.3
+            scale = 3
             thickness = 3
 
             (tw, th), _ = cv2.getTextSize(text, font, scale, thickness)

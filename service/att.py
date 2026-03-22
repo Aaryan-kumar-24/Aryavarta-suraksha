@@ -111,8 +111,8 @@ def generate_frames():
                 y1, x2, y2, x1 = [v * 4 for v in loc]
 
                 cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                cv2.putText(img, name, (x1, y2 - 6),
-                            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                cv2.putText(img, name, (x1-9, y2 - 1),
+                            cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0 ,225), 3)
 
         _, buffer = cv2.imencode(".jpg", img)
         yield (b"--frame\r\n"
