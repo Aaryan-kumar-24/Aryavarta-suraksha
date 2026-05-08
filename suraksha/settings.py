@@ -129,7 +129,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'amankumarjanuary@gmail.com'   # your gmail
-EMAIL_HOST_PASSWORD = 'gfbwcaaramanbsanwqlm'  # ⚠️ change this now
+EMAIL_HOST_PASSWORD = 'fuckubitch'  # ⚠️ change this now
 
 
 # ================= TIMEZONE FIX =================
